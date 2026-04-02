@@ -13,4 +13,12 @@ abstract class TestCase extends BaseTestCase
 
         $this->withoutVite();
     }
+
+    protected function authenticate()
+    {
+        $this->user = \App\Models\User::factory()->create();
+        $this->actingAs($this->user);
+
+        return $this->user;
+    }
 }
