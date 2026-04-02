@@ -49,11 +49,10 @@ jobs:
       - name: Generate Application Key
         run: php artisan key:generate
 
+      - name: Tests
+        run: php artisan test  
+
       - name: Build Assets
         run: npm run build
 
-      - name: Run dev server
-        run: npm run dev  
-
-      - name: Tests
-        run: ./vendor/bin/pest
+      
