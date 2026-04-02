@@ -1,7 +1,9 @@
-name: vendor
+name: product
 
 on:
   push:
+    branches:
+      - main 
     paths:
       - 'app/Http/Controllers/VendorController.php'
   

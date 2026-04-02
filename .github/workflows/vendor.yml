@@ -2,6 +2,8 @@ name: vendor
 
 on:
   push:
+    branches:
+      - main 
     paths:
       - 'app/Http/Controllers/VendorController.php'
   
