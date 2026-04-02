@@ -2,9 +2,18 @@ name: tests
 
 on:
   push:
-    paths:
-      - 'app/Http/Controllers/VendorController.php'
-     
+    branches:
+      - develop
+      - main
+      - master
+      - workos
+  pull_request:
+    branches:
+      - develop
+      - main
+      - master
+      - workos
+
 jobs:
   ci:
     runs-on: ubuntu-latest
