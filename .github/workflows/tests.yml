@@ -7,6 +7,8 @@ on:
       - main
       - master
       - workos
+    paths:
+      - 'app/Http/Controllers/Auth/**'
   pull_request:
     branches:
       - develop

@@ -50,6 +50,8 @@ class VendorController extends Controller
 
         Vendor::create($data);
 
+        //see if git run
+
         return Redirect::route('vendor.list');
     }
 
