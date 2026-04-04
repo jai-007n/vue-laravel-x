@@ -3,11 +3,12 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import { Link } from '@inertiajs/vue3';
 import TableList from './Partials/TableList.vue';
-defineProps({
+const props = defineProps({
     vendors: {
         type: Object,
     }
 });
+
 </script>
 
 <template>
@@ -17,7 +18,7 @@ defineProps({
     <AuthenticatedLayout>
         <template #header>
             <h2 class="text-xl font-semibold leading-tight text-gray-800">
-                Vendorss List
+                Vendors List
             </h2>
         </template>
 
@@ -48,6 +49,7 @@ defineProps({
                                     </tr>
                                 </thead>
                                 <tbody className="bg-white divide-y divide-gray-200">
+                                   
                                     <tr v-for="(vendor, index) in vendors" :key="vendor.id">
                                         <TableList :vendor="vendor" />
                                     </tr>

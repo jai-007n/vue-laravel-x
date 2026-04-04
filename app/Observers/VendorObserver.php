@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Models\Vendor;
+use Illuminate\Support\Facades\Cache;
 
 class VendorObserver
 {
@@ -12,6 +13,7 @@ class VendorObserver
     public function created(Vendor $vendor): void
     {
         //
+        Cache::forget('vendors_list');
     }
 
     /**
@@ -20,6 +22,9 @@ class VendorObserver
     public function updated(Vendor $vendor): void
     {
         //
+        Cache::forget('vendors_list');
+        if ($vendor->wasChanged('email')) {
+        }
     }
 
     /**
@@ -28,6 +33,7 @@ class VendorObserver
     public function deleted(Vendor $vendor): void
     {
         //
+        Cache::forget('vendors_list');
     }
 
     /**

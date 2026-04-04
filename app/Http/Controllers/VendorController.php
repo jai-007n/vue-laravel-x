@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\VendorFormRequest;
 use App\Models\Vendor;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
@@ -9,14 +10,18 @@ use Inertia\Response;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Cache;
 
 class VendorController extends Controller
 {
     //
     public function index(Request $request): Response
     {
+        $vendors = Cache::remember('vendors_list', 3600, function () {
+            return Vendor::all()->toArray();
+        });
         return Inertia::render('Vendor/List', [
-            'vendors' => Vendor::all()
+            'vendors' => $vendors
         ]);
     }
 
@@ -38,34 +43,17 @@ class VendorController extends Controller
 
     public function list() {}
 
-    public function store(Request $request): RedirectResponse
+    public function store(VendorFormRequest $request): RedirectResponse
     {
 
-        $data = $request->validate([
-            'name' => 'required|max:100',
-            'email' => 'nullable|max:100|unique:vendors',
-            'mobile' => 'sometimes|nullable|max:13',
-             'address' => 'sometimes|nullable|max:255',
-        ]);
-
-        Vendor::create($data);
-
-        //see if git run
-
+        Vendor::create($request->validated());
         return Redirect::route('vendor.list');
     }
 
-    public function update(Vendor $vendor, Request $request)
+    public function update(Vendor $vendor, VendorFormRequest $request)
     {
 
-        $data = $request->validate([
-            'name' => 'required|max:100',
-            'email' => 'nullable|max:100|unique:vendors,email,' . $vendor->id,
-            'mobile' => 'sometimes|nullable|max:13',
-            'address' => 'sometimes|nullable|max:255',
-        ]);
-
-        $vendor->update($data);
+        $vendor->update($request->validated());
         return Redirect::route('vendor.list');
     }
 }
