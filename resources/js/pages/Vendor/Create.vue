@@ -1,8 +1,8 @@
 <script setup>
+import { Head } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import UpdateVendorForm from './Partials/UpdateVendorForm.vue';
 // import DeleteUserForm from './Partials/DeleteUserForm.vue';
-import { Head } from '@inertiajs/vue3';
 const props = defineProps({
   vendor: {
     required: true

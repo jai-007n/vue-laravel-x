@@ -1,11 +1,11 @@
 <script setup>
+import { Link, useForm, usePage } from '@inertiajs/vue3';
+import { ref } from 'vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 
-import { ref } from 'vue';
-import { Link, useForm, usePage } from '@inertiajs/vue3';
 
 const props = defineProps({
     vendor: {
@@ -24,10 +24,12 @@ const form = useForm({
 
 const handleSubmit = (e)=>{
     e.preventDefault()
-    if (!vendor)
-        form.post(route('vendor.store'))
-    else
-        form.put(route('vendor.update', vendor.id))
+
+    if (!vendor) {
+form.post(route('vendor.store'))
+} else {
+form.put(route('vendor.update', vendor.id))
+}
 }
 
 

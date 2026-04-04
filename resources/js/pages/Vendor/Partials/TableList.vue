@@ -1,8 +1,8 @@
 <script setup>
 import { Link } from '@inertiajs/vue3';
-import DangerButton from '@/Components/DangerButton.vue';
 import axios from 'axios';
 import { ref } from 'vue';
+import DangerButton from '@/Components/DangerButton.vue';
 
 const props = defineProps({
   vendor: {
