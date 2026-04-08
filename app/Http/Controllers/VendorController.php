@@ -17,11 +17,26 @@ class VendorController extends Controller
     //
     public function index(Request $request): Response
     {
-        $vendors = Cache::remember('vendors_list', 3600, function () {
-            return Vendor::all()->toArray();
-        });
+        // Cache::forget('vendors_list');
+        // $vendors = Cache::remember('vendors_list', 3600, function () {
+        //     return Vendor::latest()->paginate(10)->withQueryString();
+        // });
+        // $vendors = Vendor::latest()->paginate(10)->withQueryString();
+
+        $search = $request->search;
+
+        $vendors = Vendor::when($search, function ($query, $search) {
+            $query->where('name', 'like', "%{$search}%");
+        })
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
         return Inertia::render('Vendor/List', [
-            'vendors' => $vendors
+            'vendors' => $vendors,
+            'filters' => [
+                'search' => $search
+            ]
         ]);
     }
 

@@ -3,12 +3,33 @@ import { Head } from '@inertiajs/vue3';
 import { Link } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import TableList from './Partials/TableList.vue';
+import Pagination from '@/Components/pagination/ellipse.vue';
+import { ref, watch, onMounted } from 'vue';
+import { router } from '@inertiajs/vue3';
 const props = defineProps({
     vendors: {
         type: Object,
-    }
+        default: () => ({ data: [] })
+    },
+    filters: Object
 });
 
+const search = ref(props.filters.search || '');
+import debounce from 'lodash/debounce';
+
+const updateSearch = debounce(() => {
+    router.get(route('vendor.list'), { search: search.value }, {
+        preserveState: true,
+        replace: true
+    });
+}, 300);
+
+const loading = ref(false);
+
+onMounted(() => {
+    router.on('start', () => loading.value = true);
+    router.on('finish', () => loading.value = false);
+});
 </script>
 
 <template>
@@ -22,7 +43,16 @@ const props = defineProps({
             </h2>
         </template>
 
+        <div v-if="loading" class="text-center py-2">
+            Loading...
+        </div>
+
         <div class="py-12">
+            <div class="mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8">
+                <!-- Search -->
+                <input v-model="search" @input="updateSearch" placeholder="Search..."
+                    class="border rounded-md p-2 mb-4 w-1/4" />
+            </div>
             <div class="mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8">
                 <div class="bg-white p-4 shadow sm:rounded-lg sm:p-8">
                     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
@@ -49,11 +79,13 @@ const props = defineProps({
                                     </tr>
                                 </thead>
                                 <tbody className="bg-white divide-y divide-gray-200">
-                                   
-                                    <tr v-for="(vendor, index) in vendors" :key="vendor.id">
+
+                                    <tr v-for="(vendor, index) in vendors?.data || []" :key="vendor.id">
                                         <TableList :vendor="vendor" />
                                     </tr>
                                 </tbody>
+                                <Pagination :currentPage="vendors.current_page" :lastPage="vendors.last_page"
+                                    route-name="vendor.list" :query="{ search: searchTerm }" />
                             </table>
                         </div>
                     </div>
