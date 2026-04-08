@@ -25,18 +25,29 @@ class VendorController extends Controller
 
         $search = $request->search;
 
-        $vendors = Vendor::when($search, function ($query, $search) {
-            $query->where('name', 'like', "%{$search}%");
-        })
-            ->latest()
-            ->paginate(10)
-            ->withQueryString();
+        // $vendors = Vendor::when($search, function ($query, $search) {
+        //     $query->where('name', 'like', "%{$search}%");
+        // })
+        //     ->latest()
+        //     ->paginate(10)
+        //     ->withQueryString();
+
+        $query = Vendor::query();
+
+        if ($request->has('search') && $request->search != '') {
+            $query->where('name', 'like', "%{$request->search}%");
+        }
+
+        $vendors = $query->orderBy('id', 'desc')->cursorPaginate(5); //->withQueryString();
+
 
         return Inertia::render('Vendor/List', [
-            'vendors' => $vendors,
-            'filters' => [
-                'search' => $search
-            ]
+            'vendors' =>
+            [
+                'data' => $vendors->items(),
+                'nextCursor' => optional($vendors->nextCursor())->encode(),
+            ],
+            'filters' => $request->only('search')
         ]);
     }
 
