@@ -85,7 +85,7 @@ onMounted(() => {
                                     </tr>
                                 </tbody>
                                 <Pagination :currentPage="vendors.current_page" :lastPage="vendors.last_page"
-                                    route-name="vendor.list" :query="{ search: searchTerm }" />
+                                    route-name="vendor.list" :query="{ search: search }" />
                             </table>
                         </div>
                     </div>

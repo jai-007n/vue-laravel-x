@@ -1,6 +1,6 @@
 <script setup>
 import { Link, useForm, usePage } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { ref, computed, watch } from 'vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
@@ -13,7 +13,6 @@ const props = defineProps({
     }
 });
 const vendor = props.vendor
-console.log(vendor)
 
 const form = useForm({
     name: vendor && vendor.name ? vendor.name : '',
@@ -22,14 +21,46 @@ const form = useForm({
     address: vendor && vendor.address ? vendor.address : '',
 });
 
-const handleSubmit = (e)=>{
-    e.preventDefault()
 
+// watch(form.mobile, (val, oldVal) => {
+//     // isChnaing = form.mobile === document.activeElement
+//     console.log('Saving mobile chnage...', val);
+//     console.log('Saving mobile chnage...', oldVal);
+// });
+// watch(
+//     form,
+//     (newForm) => {
+//         console.log('Mobile changed:', newForm.mobile);
+//     },
+//     { deep: true } // 🔑 needed for nested properties
+// );
+
+// watch(
+//     () => form.mobile, // getter function
+//     (newMobile, oldVal) => {
+//         triggerCompute.value = true;
+//         console.log('Mobile changed:', newMobile); // ✅ newMobile is form.mobile
+//         console.log('Saving mobile chnage...', oldVal);
+//         console.log('trigger compute calue...', triggerCompute);
+//     }
+// );
+const isCorrectMobile = ref(false);
+// const isCorrectMobile = computed(() => {
+//     console.log(triggerCompute.value,triggerCompute)
+//     return triggerCompute.value && form.mobile.length >= 10;
+// });
+
+const handleSubmit = (e) => {
+    e.preventDefault()
+    if (form.mobile.length < 10) {
+        isCorrectMobile.value = true;
+        return
+    }
     if (!vendor) {
-form.post(route('vendor.store'))
-} else {
-form.put(route('vendor.update', vendor.id))
-}
+        form.post(route('vendor.store'))
+    } else {
+        form.put(route('vendor.update', vendor.id))
+    }
 }
 
 
@@ -48,23 +79,7 @@ form.put(route('vendor.update', vendor.id))
         </header>
 
         <form @submit.prevent="handleSubmit" class="mt-6 space-y-6">
-            <div>
-                <InputLabel for="mobile" value="Mobile" />
 
-                <TextInput id="mobile" type="text" class="mt-1 block w-full" v-model="form.mobile" required autofocus
-                    autocomplete="mobile" />
-
-                <InputError class="mt-2" :message="form.errors.mobile" />
-            </div>
-
-            <div>
-                <InputLabel for="address" value="Address" />
-
-                <TextInput id="address" type="address" class="mt-1 block w-full" v-model="form.address" required
-                    autocomplete="address" />
-
-                <InputError class="mt-2" :message="form.errors.address" />
-            </div>
             <div>
                 <InputLabel for="name" value="Name" />
 
@@ -82,6 +97,25 @@ form.put(route('vendor.update', vendor.id))
 
                 <InputError class="mt-2" :message="form.errors.email" />
             </div>
+            <div>
+                <InputLabel for="mobile" value="Mobile" />
+
+                <TextInput id="mobile" type="text" class="mt-1 block w-full" v-model="form.mobile" required autofocus
+                    autocomplete="mobile" />
+
+                <InputError class="mt-2" :message="form.errors.mobile" />
+                <InputError v-if="isCorrectMobile" class="mt-2" :message="'Mobile length should be at least 10 char'" />
+            </div>
+
+            <div>
+                <InputLabel for="address" value="Address" />
+
+                <TextInput id="address" type="text" class="mt-1 block w-full" v-model="form.address" required
+                    autocomplete="address" />
+
+                <InputError class="mt-2" :message="form.errors.address" />
+            </div>
+
 
 
             <div class="flex items-center gap-4">
