@@ -6,6 +6,7 @@ import TableList from './Partials/TableList.vue';
 import Pagination from '@/Components/pagination/ellipse.vue';
 import { ref, watch, onMounted } from 'vue';
 import { router } from '@inertiajs/vue3';
+import axios from 'axios';
 const props = defineProps({
     vendors: {
         type: Object,
@@ -25,30 +26,35 @@ const updateSearch = debounce(() => {
 }, 300);
 
 const results = ref([])
-console.log(props.vendors)
-const items = ref([props.vendors?.data || []])
-let timeout = null
 
+const items = ref([...props.vendors?.data || []])
+let timeout = null
+const loading = ref(false);
 const onInput = () => {
     clearTimeout(timeout)
 
     timeout = setTimeout(async () => {
         if (!search.value) {
             results.value = []
+            console.log("i am calling here")
+            select();
             return
         }
+        loading.value = true
+        // router.get(route('vendor.autoComplete'), { search: search }, {
+        //     preserveState: true,
+        //     replace: true,
+        //     onSuccess: (page) => {
+        //         console.log(page?.props)
+        //         results.value = page.props?.vendors?.data
+        //     }
+        // });
+        const res = await axios.get(route('vendor.autoComplete'), {
+            params: { q: search.value }
+        })
 
-        router.get(route('vendor.autoComplete'), { search: search.value }, {
-            preserveState: true,
-            replace: true,
-            onSuccess: (page) => {
-                console.log(page?.props)
-                results.value = page.props?.vendors?.data
-            }
-        });
-        // const res = await axios.get('/api/vendors/autocomplete', {
-        //     params: { q: search.value }
-        // })
+        results.value = res?.data || []
+        loading.value = false
     }, 300) // debounce
 }
 
@@ -57,21 +63,22 @@ const selectss = (item) => {
     results.value = []
 }
 
-const select = debounce((item) => {
-    console.log(item)
-    search.value = item.name
-    router.get(route('vendor.list'), { search: item.name }, {
+const select = debounce((item = null) => {
+    search.value = item?.name || null
+    loading.value = true
+    router.get(route('vendor.list'), { search: item?.name }, {
         preserveState: true,
         replace: true,
         only: ['vendors'],
         onSuccess: (page) => {
             items.value = page.props?.vendors?.data
+            loading.value = false
         }
     });
     results.value = []
 }, 300);
 
-const loading = ref(false);
+
 
 onMounted(() => {
     router.on('start', () => loading.value = true);
@@ -90,9 +97,10 @@ onMounted(() => {
             </h2>
         </template>
 
-        <div v-if="loading" class="text-center py-2">
+        <!-- <div v-if="loading" class="text-center py-2">
             Loading...
-        </div>
+        </div> -->
+        <div v-if="loading" class="spinner"></div>
 
         <div class="py-12">
             <div class="mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8 autoComplete">
@@ -104,6 +112,9 @@ onMounted(() => {
                         {{ item.name }}
                     </li>
                 </ul>
+                <p v-if="!loading && search && results.length === 0">
+                    No results found
+                </p>
             </div>
             <div class="mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8">
                 <div class="bg-white p-4 shadow sm:rounded-lg sm:p-8">
@@ -132,7 +143,7 @@ onMounted(() => {
                                 </thead>
                                 <tbody className="bg-white divide-y divide-gray-200">
 
-                                    <tr v-for="(vendor, index) in items" :key="vendor.id">
+                                    <tr v-for="(vendor, index) in items" :key="vendor?.id">
                                         <TableList :vendor="vendor" />
                                     </tr>
                                 </tbody>

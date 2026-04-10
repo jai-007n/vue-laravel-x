@@ -64,8 +64,9 @@ class VendorController extends Controller
         $search = $request->input('q');
 
         $results = Vendor::search('*' . $search . '*')
-            ->take(10);
-            
+            ->take(10)->get(['id', 'name']);
+
+        return response()->json($results);
 
         return Inertia::render('Vendor/List', [
             'vendors' => $results,
