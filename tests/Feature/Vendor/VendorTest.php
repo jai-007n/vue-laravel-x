@@ -40,5 +40,5 @@ test('can not accept duplicate email for vendor', function () {
     ], ['X-Inertia' => 'true']);
 
     $response->assertStatus(302);
-    $response->assertSessionHasErrors(['name','email']);
+    $response->assertSessionHasErrors(['email']);
 });

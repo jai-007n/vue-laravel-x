@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\VendorController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -46,6 +47,14 @@ Route::middleware('auth')->prefix('product')->name('product.')
         Route::post('/', 'store')->name('store');
         Route::put('/{product}',  'update')->name('update');
         Route::delete('/{product}',  'destroy')->name('destroy');
+    });
+
+Route::middleware('auth')->prefix('search')->name('search.')
+    ->controller(SearchController::class)
+    ->group(function () {
+        Route::get('/index',  'index');
+        Route::get('/search',  'search');
+        Route::get('/searchp',  'searchPaginated');
     });
 
 require __DIR__ . '/auth.php';
