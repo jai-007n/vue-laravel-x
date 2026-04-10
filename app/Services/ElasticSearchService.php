@@ -11,7 +11,7 @@ class ElasticSearchService
     public function __construct()
     {
         $this->client = ClientBuilder::create()
-            ->setHosts(['https://localhost:9200'])
+            ->setHosts(['http://localhost:9200'])
             ->setBasicAuthentication('elastic', 'ZoNKr4CLM7FdDASFuDCF')
             ->setSSLVerification(false)
             ->build();

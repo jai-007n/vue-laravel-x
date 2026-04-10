@@ -36,6 +36,7 @@ Route::middleware('auth')->prefix('vendor')->name('vendor.')
         Route::post('/', 'store')->name('store');
         Route::put('/{vendor}',  'update')->name('update');
         Route::delete('/{vendor}',  'destroy')->name('destroy');
+        Route::get('/autocomplete', 'autocomplete')->name('autoComplete');
     });
 
 Route::middleware('auth')->prefix('product')->name('product.')
@@ -56,5 +57,9 @@ Route::middleware('auth')->prefix('search')->name('search.')
         Route::get('/search',  'search');
         Route::get('/searchp',  'searchPaginated');
     });
+
+Route::get('/es-test', function () {
+    return app(\Elastic\Elasticsearch\Client::class)->info();
+});
 
 require __DIR__ . '/auth.php';

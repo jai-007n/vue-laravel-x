@@ -24,6 +24,53 @@ const updateSearch = debounce(() => {
     });
 }, 300);
 
+const results = ref([])
+console.log(props.vendors)
+const items = ref([props.vendors?.data || []])
+let timeout = null
+
+const onInput = () => {
+    clearTimeout(timeout)
+
+    timeout = setTimeout(async () => {
+        if (!search.value) {
+            results.value = []
+            return
+        }
+
+        router.get(route('vendor.autoComplete'), { search: search.value }, {
+            preserveState: true,
+            replace: true,
+            onSuccess: (page) => {
+                console.log(page?.props)
+                results.value = page.props?.vendors?.data
+            }
+        });
+        // const res = await axios.get('/api/vendors/autocomplete', {
+        //     params: { q: search.value }
+        // })
+    }, 300) // debounce
+}
+
+const selectss = (item) => {
+    search.value = item.name
+    results.value = []
+}
+
+const select = debounce((item) => {
+    console.log(item)
+    search.value = item.name
+    router.get(route('vendor.list'), { search: item.name }, {
+        preserveState: true,
+        replace: true,
+        only: ['vendors'],
+        onSuccess: (page) => {
+            items.value = page.props?.vendors?.data
+        }
+    });
+    results.value = []
+}, 300);
+
 const loading = ref(false);
 
 onMounted(() => {
@@ -48,10 +95,15 @@ onMounted(() => {
         </div>
 
         <div class="py-12">
-            <div class="mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8">
+            <div class="mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8 autoComplete">
                 <!-- Search -->
-                <input v-model="search" @input="updateSearch" placeholder="Search..."
+                <input v-model="search" @input="onInput" placeholder="Search..."
                     class="border rounded-md p-2 mb-4 w-1/4" />
+                <ul v-if="results?.length" class="dropdown">
+                    <li v-for="item in results" :key="item.id" @click="select(item)">
+                        {{ item.name }}
+                    </li>
+                </ul>
             </div>
             <div class="mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8">
                 <div class="bg-white p-4 shadow sm:rounded-lg sm:p-8">
@@ -80,7 +132,7 @@ onMounted(() => {
                                 </thead>
                                 <tbody className="bg-white divide-y divide-gray-200">
 
-                                    <tr v-for="(vendor, index) in vendors?.data || []" :key="vendor.id">
+                                    <tr v-for="(vendor, index) in items" :key="vendor.id">
                                         <TableList :vendor="vendor" />
                                     </tr>
                                 </tbody>

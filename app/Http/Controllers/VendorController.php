@@ -25,15 +25,50 @@ class VendorController extends Controller
 
         $search = $request->search;
 
-        $vendors = Vendor::when($search, function ($query, $search) {
-            $query->where('name', 'like', "%{$search}%");
-        })
-            ->latest()
-            ->paginate(10)
-            ->withQueryString();
+        // // dd(Vendor::search('xyz')->raw());
+        // $vendors = Vendor::search('jon')->get();
+
+        // dd($vendors);
+
+        // $vendors = Vendor::when($search, function ($query, $search) {
+        //     $query->where('name', 'like', "%{$search}%");
+        // })
+        //     ->latest()
+        //     ->paginate(10)
+        //     ->withQueryString();
+
+        //$query = Vendor::query();
+        //  $vendors = Vendor::when($search, function ($query, $search) {
+        //             $query->where('name', 'like', "%{$search}%");
+        //         })
+
+        if ($search)
+            $vendors = Vendor::search("*{$search}*")
+                ->paginate(10)
+                ->withQueryString();
+        else
+            $vendors = Vendor::latest()
+                ->paginate(10)
+                ->withQueryString();
 
         return Inertia::render('Vendor/List', [
             'vendors' => $vendors,
+            'filters' => [
+                'search' => $search
+            ]
+        ]);
+    }
+
+    public function autocomplete(Request $request)
+    {
+        $search = $request->input('q');
+
+        $results = Vendor::search('*' . $search . '*')
+            ->take(10);
+            
+
+        return Inertia::render('Vendor/List', [
+            'vendors' => $results,
             'filters' => [
                 'search' => $search
             ]
