@@ -13,7 +13,8 @@ class VendorObserver
     public function created(Vendor $vendor): void
     {
         //
-        Cache::forget('vendors_list');
+        // dd(11);
+        //Cache::forget('vendors_list');
     }
 
     /**

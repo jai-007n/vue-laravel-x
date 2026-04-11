@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\VendorFormRequest;
+use App\Http\Resources\VendorResource;
+use App\Services\VendorService;
 use App\Models\Vendor;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
@@ -15,6 +17,9 @@ use Illuminate\Support\Facades\Cache;
 class VendorController extends Controller
 {
     //
+    public function __construct(
+        protected VendorService $vendorService
+    ) {}
     public function index(Request $request): Response
     {
         // Cache::forget('vendors_list');
@@ -25,12 +30,15 @@ class VendorController extends Controller
 
         $search = $request->search;
 
-        $vendors = Vendor::when($search, function ($query, $search) {
-            $query->where('name', 'like', "%{$search}%");
-        })
-            ->latest()
-            ->paginate(10)
-            ->withQueryString();
+        // $vendors = Vendor::when($search, function ($query, $search) {
+        //     $query->where('name', 'like', "%{$search}%");
+        // })
+        //     ->latest()
+        //     ->orderBy('id','desc')
+        //     ->paginate(10)
+        //     ->withQueryString();
+        $perPage = $request->offset ?? 10;
+        $vendors = $this->vendorService->fetchData($search, $perPage);
 
         return Inertia::render('Vendor/List', [
             'vendors' => $vendors,
@@ -47,6 +55,8 @@ class VendorController extends Controller
 
     public function edit(Request $request, Vendor $vendor): Response
     {
+
+        $vendor = new VendorResource($vendor)->toArray($request);
         return Inertia::render('Vendor/Create', ['vendor' => $vendor, 'edit' => true]);
     }
 
@@ -61,7 +71,10 @@ class VendorController extends Controller
     public function store(VendorFormRequest $request): RedirectResponse
     {
 
-        Vendor::create($request->validated());
+
+        // dd($request->all(),$request->validated(),$request->toData());
+        // Vendor::create($request->validated());
+        $this->vendorService->create($request->toData());
         return Redirect::route('vendor.list');
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Data\VendorData;
 use App\Models\Vendor;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -24,7 +25,7 @@ class VendorFormRequest extends FormRequest
      */
     public function rules(): array
     {
-      
+
         return [
             'name' => ['required', 'string', 'max:100'],
             'mobile' => 'sometimes|nullable|max:13',
@@ -34,8 +35,13 @@ class VendorFormRequest extends FormRequest
                 'string',
                 'email',
                 'max:100',
-                Rule::unique(Vendor::class)->ignore($this->route('vendor')?->id),
+                Rule::unique(Vendor::class)->ignore($this->route('vendor')),
             ],
         ];
+    }
+
+    public function toData(): VendorData
+    {
+        return VendorData::from($this->validated());
     }
 }

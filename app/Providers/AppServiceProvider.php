@@ -5,6 +5,8 @@ namespace App\Providers;
 
 use App\Models\Vendor;
 use App\Observers\VendorObserver;
+use App\Repositories\DataInterface\VendorRepositoryInterface;
+use App\Repositories\VendorRepository;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 
@@ -16,6 +18,10 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         //
+        $this->app->bind(
+            VendorRepositoryInterface::class,
+            VendorRepository::class
+        );
     }
 
     /**
