@@ -9,5 +9,7 @@ interface VendorRepositoryInterface
 {
     public function create(array $data): Vendor;
 
-    public function fetchData(?string $search,int $perPage = 10): LengthAwarePaginator;
+    public function update(Vendor $vendor, array $data): Vendor;
+
+    public function fetchData(?string $search, int $perPage = 10): LengthAwarePaginator;
 }

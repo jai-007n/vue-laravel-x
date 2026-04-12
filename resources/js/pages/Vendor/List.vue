@@ -6,6 +6,27 @@ import TableList from './Partials/TableList.vue';
 import Pagination from '@/Components/pagination/ellipse.vue';
 import { ref, watch, onMounted } from 'vue';
 import { router } from '@inertiajs/vue3';
+import { usePage } from '@inertiajs/vue3'
+import { useToast } from 'vue-toastification'
+
+const toast = useToast()
+const page = usePage()
+
+watch(
+    () => page.props,
+    (props) => {
+        const flash = props.flash
+
+        if (flash?.success) {
+            toast.success(flash.success)
+        }
+
+        if (flash?.error) {
+            toast.error(flash.error)
+        }
+    },
+    { deep: true, immediate: true }
+)
 const props = defineProps({
     vendors: {
         type: Object,

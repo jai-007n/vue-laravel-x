@@ -13,6 +13,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class VendorController extends Controller
 {
@@ -70,18 +71,35 @@ class VendorController extends Controller
 
     public function store(VendorFormRequest $request): RedirectResponse
     {
-
-
-        // dd($request->all(),$request->validated(),$request->toData());
-        // Vendor::create($request->validated());
-        $this->vendorService->create($request->toData());
-        return Redirect::route('vendor.list');
+        DB::beginTransaction();
+        try {
+            $this->vendorService->create($request->toData());
+            DB::commit();
+            return Redirect::route('vendor.list')
+                ->with('success', 'Vendor created successfully');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return Redirect::back()
+                ->withInput()
+                ->with('error', 'Something went wrong while creating vendor');
+        }
     }
 
     public function update(Vendor $vendor, VendorFormRequest $request)
     {
-
-        $vendor->update($request->validated());
-        return Redirect::route('vendor.list');
+        $vendor->touch();
+        DB::beginTransaction();
+        try {
+            $this->vendorService->update($vendor, $request->toData());
+            DB::commit();
+            return Redirect::route('vendor.list')
+                ->with('success', 'Vendor updated successfully');
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            dd($e->getMessage());
+            return Redirect::back()
+                ->withInput()
+                ->with('error', 'Something went wrong while creating vendor');
+        }
     }
 }

@@ -13,6 +13,12 @@ class VendorRepository implements VendorRepositoryInterface
         return Vendor::create($data);
     }
 
+    public function update(Vendor $vendor, array $data): Vendor
+    {
+        $vendor->update($data);
+        return $vendor->fresh();
+    }
+
     public function fetchData(?string $search, int $perPage = 10): LengthAwarePaginator
     {
         return Vendor::searchName($search)

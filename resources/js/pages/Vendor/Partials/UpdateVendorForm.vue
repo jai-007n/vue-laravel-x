@@ -6,6 +6,29 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 
+// import { usePage } from '@inertiajs/vue3'
+// import { watch } from 'vue'
+import { useToast } from 'vue-toastification'
+
+const toast = useToast()
+const page = usePage()
+
+watch(
+    () => page.props,
+    (props) => {
+        const flash = props.flash
+        console.log('FLASH:', flash)
+        console.log('Props:', props)
+        if (flash?.success) {
+            toast.success(flash.success)
+        }
+
+        if (flash?.error) {
+            toast.error(flash.error)
+        }
+    },
+    { deep: true, immediate: true }
+)
 
 const props = defineProps({
     vendor: {
@@ -64,6 +87,7 @@ const handleSubmit = (e) => {
 
 
 </script>
+
 <template>
     <section>
         <header>

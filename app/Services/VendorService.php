@@ -22,4 +22,9 @@ class VendorService
     {
         return $this->vendorRepository->fetchData($search, $perPage);
     }
+
+    public function update(Vendor $vendor, VendorData $data): Vendor
+    {
+        return $this->vendorRepository->update($vendor, $data->all());
+    }
 }
