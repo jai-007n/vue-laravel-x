@@ -49,6 +49,8 @@ Route::middleware('auth')->prefix('product')->name('product.')
         Route::delete('/{product}',  'destroy')->name('destroy');
     });
 
+Route::get('/broadcast', [VideoController::class, 'broadCastTest']);
+
 Route::get('/video', [VideoController::class, 'stream']);
 Route::get('/video/stream', [VideoController::class, 'chunkStream']);
 

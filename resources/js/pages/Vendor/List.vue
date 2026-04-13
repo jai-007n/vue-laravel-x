@@ -50,6 +50,16 @@ const loading = ref(false);
 onMounted(() => {
     router.on('start', () => loading.value = true);
     router.on('finish', () => loading.value = false);
+
+    window.Echo.channel('chat')
+        .listen('MessageSent', (e) => {
+            console.log('New message:', e.message);
+            toast.success(e.message)
+
+            // axios.post('/api/message-received', {
+            //     id: e.id
+            // });
+        });
 });
 </script>
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\MessageSent;
 use Illuminate\Http\Request;
 
 class VideoController extends Controller
@@ -75,5 +76,21 @@ class VideoController extends Controller
             fpassthru($fileStream);
             fclose($fileStream);
         }, 200, $headers);
+    }
+
+
+    public function broadCastTest()
+    {
+        broadcast(new MessageSent('Hello Web Socket'));
+
+        return "Message Sent Successfully  !!!!!";
+    }
+
+    public function received(Request $request)
+    {
+        //     Message::find($request->id)->update([
+        //         'delivered' => true
+        //     ]);
+        // }
     }
 }
