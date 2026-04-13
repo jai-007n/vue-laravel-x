@@ -3,18 +3,22 @@
 namespace App\Listeners;
 
 use App\Events\SendVendorEmailEvent;
+use App\Mail\WelcomeEmail;
+use App\Services\MailService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class SendVendorEmailListener implements ShouldQueue
 {
+    protected MailService $mailService;
     /**
      * Create the event listener.
      */
-    public function __construct()
+    public function __construct(MailService $mailService)
     {
-        //
+        $this->mailService = $mailService;
     }
 
     /**
@@ -23,13 +27,12 @@ class SendVendorEmailListener implements ShouldQueue
     public function handle(SendVendorEmailEvent $event): void
     {
         //
-        \Log::info('Processing queued listener...', [
+        Log::info('Processing queued listener...', [
             'event' => $event
         ]);
 
-        Mail::raw('Hello Mailpit', function ($message) use ($event) {
-            $message->to($event->vendor['email'])
-                ->subject('Test Email');
-        });
+        $this->mailService->sendWelcome($event?->vendor);
+        
+       
     }
 }

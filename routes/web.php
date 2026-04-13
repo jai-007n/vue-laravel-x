@@ -26,7 +26,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::middleware('auth')->prefix('vendor')->name('vendor.')
+Route::middleware(['auth'])->prefix('vendor')->name('vendor.')
     ->controller(VendorController::class)
     ->group(function () {
         Route::get('/list', 'index')->name('list');

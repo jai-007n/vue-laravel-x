@@ -6,9 +6,12 @@ on:
       - develop
       - main
       - master
-      - workos
+      - events
+      - dto
     paths:
       - 'app/Http/Controllers/Auth/**'
+      - 'app/Events/**'
+      - 'app/Services/**'
   pull_request:
     branches:
       - develop
@@ -51,8 +54,11 @@ jobs:
       - name: Generate Application Key
         run: php artisan key:generate
 
-      - name: Tests
+      - name: Auth Tests
         run: php artisan test tests/Feature/Auth
+
+      - name: Servcie Tests
+        run: php artisan test tests/Feature/Auth  
 
       - name: Build Assets
         run: npm run build
