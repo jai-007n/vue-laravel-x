@@ -58,7 +58,7 @@ jobs:
         run: php artisan test tests/Feature/Auth
 
       - name: Servcie Tests
-        run: php artisan test tests/Feature/Auth  
+        run: php artisan test tests/Feature/Services  
 
       - name: Build Assets
         run: npm run build

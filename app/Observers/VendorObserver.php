@@ -5,6 +5,7 @@ namespace App\Observers;
 use App\Events\SendVendorEmailEvent;
 use App\Http\Resources\VendorResource;
 use App\Models\Vendor;
+use App\Notifications\VendorCreate;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
@@ -16,6 +17,7 @@ class VendorObserver
     public function created(Vendor $vendor): void
     {
         event(new SendVendorEmailEvent($vendor));
+        $vendor->notify(new VendorCreate($vendor));
         Log::info('Vendor event created dispatched!');
     }
 
@@ -25,6 +27,7 @@ class VendorObserver
     public function updated(Vendor $vendor): void
     {
         //Cache::forget('vendors_list');
+
         if ($vendor->wasChanged('email')) {
             event(new SendVendorEmailEvent($vendor));
             Log::info('Vendor udapted event dispatched!');
