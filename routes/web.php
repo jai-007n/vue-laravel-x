@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\VendorController;
+use App\Http\Controllers\VideoController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -47,5 +48,8 @@ Route::middleware('auth')->prefix('product')->name('product.')
         Route::put('/{product}',  'update')->name('update');
         Route::delete('/{product}',  'destroy')->name('destroy');
     });
+
+Route::get('/video', [VideoController::class, 'stream']);
+Route::get('/video/stream', [VideoController::class, 'chunkStream']);
 
 require __DIR__ . '/auth.php';
