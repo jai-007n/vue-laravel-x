@@ -12,6 +12,8 @@ import { useToast } from 'vue-toastification'
 const toast = useToast()
 const page = usePage()
 
+const roomId = ref(1);
+
 watch(
     () => page.props,
     (props) => {
@@ -59,6 +61,12 @@ onMounted(() => {
             // axios.post('/api/message-received', {
             //     id: e.id
             // });
+        });
+
+    window.Echo.private(`room.${roomId.value}`)
+        .listen('MessageSent', (e) => {
+            console.log('New message:', e.message);
+            toast.success(e.message.message)
         });
 });
 </script>

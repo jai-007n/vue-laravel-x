@@ -25,7 +25,7 @@ class MessageSent implements ShouldBroadcastNow
         $this->message = $message;
     }
 
-    public function broadcastOn()
+    public function abroadcastOn()
     {
         return new Channel('chat');
     }
@@ -41,4 +41,9 @@ class MessageSent implements ShouldBroadcastNow
     //         new PrivateChannel('channel-name'),
     //     ];
     // }
+
+    public function broadcastOn()
+    {
+        return new PrivateChannel('room.' . $this->message['roomId']);
+    }
 }

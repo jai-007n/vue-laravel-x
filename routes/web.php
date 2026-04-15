@@ -2,9 +2,12 @@
 
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RoomController;
 use App\Http\Controllers\VendorController;
 use App\Http\Controllers\VideoController;
+use App\Models\Room;
 use Illuminate\Foundation\Application;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -26,6 +29,13 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+Route::middleware('auth')->group(function () {
+    Route::get('/rooms/{room}/join', [RoomController::class, 'join']);
+    Route::post('/rooms/{room}/leave', [RoomController::class, 'leave']);
+    Route::get('/room/{room}/send', [RoomController::class, 'send']);
+});
+
 
 Route::middleware(['auth'])->prefix('vendor')->name('vendor.')
     ->controller(VendorController::class)
