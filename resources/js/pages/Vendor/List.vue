@@ -119,7 +119,7 @@ onMounted(() => {
                                 </thead>
                                 <tbody className="bg-white divide-y divide-gray-200">
 
-                                    <tr v-for="(vendor, index) in vendors?.data || []" :key="vendor.id">
+                                    <tr v-for="(vendor, index) in vendors?.data || []" :key="vendor?.id">
                                         <TableList :vendor="vendor" />
                                     </tr>
                                 </tbody>

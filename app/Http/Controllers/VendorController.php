@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class VendorController extends Controller
 {
@@ -87,19 +88,26 @@ class VendorController extends Controller
 
     public function update(Vendor $vendor, VendorFormRequest $request)
     {
-        $vendor->touch();
+
+        $short = "Something went wrong while creating vendor";
         DB::beginTransaction();
         try {
+            $vendor = Vendor::where('id', $vendor->id)
+                ->lock('FOR UPDATE NOWAIT')
+                ->first();
+            $vendor->touch();
             $this->vendorService->update($vendor, $request->toData());
             DB::commit();
             return Redirect::route('vendor.list')
                 ->with('success', 'Vendor updated successfully');
         } catch (\Throwable $e) {
             DB::rollBack();
-            dd($e->getMessage());
+            if (app()->environment('local')) {
+                $short = Str::limit($e->getMessage(), 100, '...');
+            }
             return Redirect::back()
                 ->withInput()
-                ->with('error', 'Something went wrong while creating vendor');
+                ->with('error', $short);
         }
     }
 }
